@@ -73,6 +73,7 @@ ClassImp(AliAnalysisTaskCVE);
 //---------------------------------------------------
 AliAnalysisTaskCVE::AliAnalysisTaskCVE() : AliAnalysisTaskSE(),
 mHarmonic(2.),
+fFilterBit(1),
 fPtMin(0.2),
 fPtMax(5.),
 fEtaMax(0.8),
@@ -90,11 +91,11 @@ fV0DcaBetweenDaughtersMax(1.),
 fV0PtMin(0.5),
 fV0RapidityMax(0.5),
 
-fDaughtersPtMax(20),
+fDaughtersPtMax(20.),
 fDaughtersEtaMax(0.8),
 fDaughtersTPCNclsMin(70),
 fDaughtersDCAToPrimVtxMin(0.02),
-fDaughtersNsigma(3),
+fDaughtersNsigma(3.),
 
 fMassMean(1.115683),
 fLambdaMassCut(0.01)
@@ -392,6 +393,7 @@ fLambdaMassCut(0.01)
 //---------------------------------------------------
 AliAnalysisTaskCVE::AliAnalysisTaskCVE(const char *name) : AliAnalysisTaskSE(name),
 mHarmonic(2.),
+fFilterBit(1),
 fPtMin(0.2),
 fPtMax(5.),
 fEtaMax(0.8),
@@ -409,11 +411,11 @@ fV0DcaBetweenDaughtersMax(1.),
 fV0PtMin(0.5),
 fV0RapidityMax(0.5),
 
-fDaughtersPtMax(20),
+fDaughtersPtMax(20.),
 fDaughtersEtaMax(0.8),
 fDaughtersTPCNclsMin(70),
 fDaughtersDCAToPrimVtxMin(0.02),
-fDaughtersNsigma(3),
+fDaughtersNsigma(3.),
 
 fMassMean(1.115683),
 fLambdaMassCut(0.01)
@@ -1440,7 +1442,7 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       AliError(Form("%s: Could not get Track", GetName()));
       continue;
     }
-    if (!track->TestFilterBit(1)) continue;
+    if (!track->TestFilterBit(fFilterBit)) continue;
     double pt     = track->Pt();
     double eta    = track->Eta();
     double phi    = track->Phi();

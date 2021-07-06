@@ -54,6 +54,33 @@ void runGrid(int index=0)
   // task->SelectCollisionCandidates(AliVEvent::kSemiCentral+AliVEvent::kCentral+AliVEvent::kMB);
   task->SelectCollisionCandidates(AliVEvent::kMB);
   // task->SelectCollisionCandidates(AliVEvent::kINT7);
+  task->SetHarmonic(2.);
+  task->SetFilterbit(1);
+  task->SetPtMin(0.2);
+  task->SetPtMax(5.);
+  task->SetEtaMax(0.8);
+  task->SetNhitsMin(80);
+  task->SetChi2Max(4.);
+  task->SetDeDxMin(10.);
+  task->SetDcaXyMax(3.);
+  task->SetDcaZMax(3.);
+
+  task->SetV0CPAMin(0.995);
+  task->SetV0DCAToPrimVtxMax(1.5);
+  task->SetV0DecayLengthMax(100.);
+  task->SetV0DecayLengthMin(3.);
+  task->SetV0DcaBetweenDaughtersMax(1.);
+  task->SetV0PtMin(0.5);
+  task->SetV0RapidityMax(0.5);
+
+  task->SetDaughtersPtMax(20.);
+  task->SetDaughtersEtaMax(0.8);
+  task->SetDaughtersTPCNclsMin(70);
+  task->SetDaughtersDCAToPrimVtxMin(0.02);
+  task->SetDaughtersNsigma(3.);
+
+  task->SetMassMean(1.115683);
+  task->SetLambdaMassCut(0.01);
   mgr->AddTask(task);
 
   // Create containers for input/output
