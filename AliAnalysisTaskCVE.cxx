@@ -117,7 +117,9 @@ fLambdaMassCut(0.01)
   for (int i=0; i<2; ++i) hVxy[i]      = NULL;
   for (int i=0; i<2; ++i) hVz[i]       = NULL;
 
-  //Event Plane
+  //Random Event Plane
+  hPsiRDM = NULL;
+  //TPC Event Plane
   hPsiTPC = NULL;
 
   // Track-wise
@@ -434,8 +436,11 @@ fLambdaMassCut(0.01)
   for (int i=0; i<2; ++i) hVz[i]       = NULL;
 
 
-  //Event Plane
+  //Random Event Plane
+  hPsiRDM = NULL;
+  //TPC Event Plane
   hPsiTPC = NULL;
+
 
   // Track-wise
   for (int i=0; i<2; ++i) hPt[i]    = NULL;
@@ -2176,7 +2181,7 @@ bool AliAnalysisTaskCVE::IsGoodV0(AliAODv0 *aodV0) {
   double dPt = aodV0->Pt();
   if(dPt < fV0PtMin) return kFALSE;
   double dEta = aodV0->RapLambda();
-  if(dEta < fV0RapidityMax) return;
+  if(dEta < fV0RapidityMax) return kFALSE;
   return kTRUE;
 }
 
