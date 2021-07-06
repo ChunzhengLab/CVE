@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "runGrid.C": "cpp",
+    "thread": "cpp",
+    "MyAnalysis.C": "cpp",
+    "v0select.C": "cpp"
+  }
+}

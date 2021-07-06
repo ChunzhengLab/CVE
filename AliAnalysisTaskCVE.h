@@ -73,7 +73,6 @@ private:
   TH2D *hVxy[2];
   TH1D *hVz[2];
 
-  
   //Random Event Plane
   TH3D* hPsiRDM;
   //TPC Event Plane
@@ -331,21 +330,21 @@ private:
 
   //lambda - p
   //lambda - p+
-  TProfile* pDelta_lambda_protron;
-  TProfile* pGammaTPC_lambda_protron;
-  TProfile* pGammaRDM_lambda_protron;
+  TProfile* pDelta_lambda_proton;
+  TProfile* pGammaTPC_lambda_proton;
+  TProfile* pGammaRDM_lambda_proton;
   //antiLambda - p+
-  TProfile* pDelta_antiLambda_protron;
-  TProfile* pGammaTPC_antiLambda_protron;
-  TProfile* pGammaRDM_antiLambda_protron;
+  TProfile* pDelta_antiLambda_proton;
+  TProfile* pGammaTPC_antiLambda_proton;
+  TProfile* pGammaRDM_antiLambda_proton;
   //lambda - p-
-  TProfile* pDelta_lambda_antiProtron;
-  TProfile* pGammaTPC_lambda_antiProtron;
-  TProfile* pGammaRDM_lambda_antiProtron;
+  TProfile* pDelta_lambda_antiProton;
+  TProfile* pGammaTPC_lambda_antiProton;
+  TProfile* pGammaRDM_lambda_antiProton;
   //antiLambda - p-
-  TProfile* pDelta_antiLambda_antiProtron;
-  TProfile* pGammaTPC_antiLambda_antiProtron;
-  TProfile* pGammaRDM_antiLambda_antiProtron;
+  TProfile* pDelta_antiLambda_antiProton;
+  TProfile* pGammaTPC_antiLambda_antiProton;
+  TProfile* pGammaRDM_antiLambda_antiProton;
 
 
   AliAnalysisTaskCVE(const AliAnalysisTaskCVE &);

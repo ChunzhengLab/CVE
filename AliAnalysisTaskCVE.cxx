@@ -372,21 +372,21 @@ fLambdaMassCut(0.01)
 
   //lambda - p
   //lambda - p+
-  pDelta_lambda_protron = NULL;
-  pGammaTPC_lambda_protron = NULL;
-  pGammaRDM_lambda_protron = NULL;
+  pDelta_lambda_proton = NULL;
+  pGammaTPC_lambda_proton = NULL;
+  pGammaRDM_lambda_proton = NULL;
   //antiLambda - p+
-  pDelta_antiLambda_protron = NULL;
-  pGammaTPC_antiLambda_protron = NULL;
-  pGammaRDM_antiLambda_protron = NULL;
+  pDelta_antiLambda_proton = NULL;
+  pGammaTPC_antiLambda_proton = NULL;
+  pGammaRDM_antiLambda_proton = NULL;
   //lambda - p-
-  pDelta_lambda_antiProtron = NULL;
-  pGammaTPC_lambda_antiProtron = NULL;
-  pGammaRDM_lambda_antiProtron = NULL;
+  pDelta_lambda_antiProton = NULL;
+  pGammaTPC_lambda_antiProton = NULL;
+  pGammaRDM_lambda_antiProton = NULL;
   //antiLambda - p-
-  pDelta_antiLambda_antiProtron = NULL;
-  pGammaTPC_antiLambda_antiProtron = NULL;
-  pGammaRDM_antiLambda_antiProtron = NULL;
+  pDelta_antiLambda_antiProton = NULL;
+  pGammaTPC_antiLambda_antiProton = NULL;
+  pGammaRDM_antiLambda_antiProton = NULL;
 }
 
 //---------------------------------------------------
@@ -435,12 +435,10 @@ fLambdaMassCut(0.01)
   for (int i=0; i<2; ++i) hVxy[i]      = NULL;
   for (int i=0; i<2; ++i) hVz[i]       = NULL;
 
-
   //Random Event Plane
   hPsiRDM = NULL;
   //TPC Event Plane
   hPsiTPC = NULL;
-
 
   // Track-wise
   for (int i=0; i<2; ++i) hPt[i]    = NULL;
@@ -692,21 +690,21 @@ fLambdaMassCut(0.01)
 
   //lambda - p
   //lambda - p+
-  pDelta_lambda_protron = NULL;
-  pGammaTPC_lambda_protron = NULL;
-  pGammaRDM_lambda_protron = NULL;
+  pDelta_lambda_proton = NULL;
+  pGammaTPC_lambda_proton = NULL;
+  pGammaRDM_lambda_proton = NULL;
   //antiLambda - p+
-  pDelta_antiLambda_protron = NULL;
-  pGammaTPC_antiLambda_protron = NULL;
-  pGammaRDM_antiLambda_protron = NULL;
+  pDelta_antiLambda_proton = NULL;
+  pGammaTPC_antiLambda_proton = NULL;
+  pGammaRDM_antiLambda_proton = NULL;
   //lambda - p-
-  pDelta_lambda_antiProtron = NULL;
-  pGammaTPC_lambda_antiProtron = NULL;
-  pGammaRDM_lambda_antiProtron = NULL;
+  pDelta_lambda_antiProton = NULL;
+  pGammaTPC_lambda_antiProton = NULL;
+  pGammaRDM_lambda_antiProton = NULL;
   //antiLambda - p-
-  pDelta_antiLambda_antiProtron = NULL;
-  pGammaTPC_antiLambda_antiProtron = NULL;
-  pGammaRDM_antiLambda_antiProtron = NULL;
+  pDelta_antiLambda_antiProton = NULL;
+  pGammaTPC_antiLambda_antiProton = NULL;
+  pGammaRDM_antiLambda_antiProton = NULL;
 
   DefineInput(0,TChain::Class());
   DefineOutput(1,TList::Class());
@@ -785,6 +783,13 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   for (int i=0; i<2; ++i) mOutputList->Add(hVxy[i]);
   for (int i=0; i<2; ++i) mOutputList->Add(hVz[i]);
 
+
+  //Random Event Plane
+  hPsiRDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
+  mOutputList->Add(hPsiRDM);
+  //TPC Event Plane
+  hPsiTPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
+  mOutputList->Add(hPsiTPC);
 
   // track-wise
   hPt[0] = new TH1D("hPtBeforeCut", "", 200, 0., 20.);
@@ -1285,21 +1290,21 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
 
   //lambda - p
   //lambda - p+
-  pDelta_lambda_protron = new TProfile("pDelta_lambda_protron","",20,0.,100.);
-  pGammaTPC_lambda_protron = new TProfile("pGammaTPC_lambda_protron","",20,0.,100.);
-  pGammaRDM_lambda_protron = new TProfile("pGammaRDM_lambda_protron","",20,0.,100.);
+  pDelta_lambda_proton = new TProfile("pDelta_lambda_proton","",20,0.,100.);
+  pGammaTPC_lambda_proton = new TProfile("pGammaTPC_lambda_proton","",20,0.,100.);
+  pGammaRDM_lambda_proton = new TProfile("pGammaRDM_lambda_proton","",20,0.,100.);
   //antiLambda - p+
-  pDelta_antiLambda_protron = new TProfile("pDelta_antiLambda_protron","",20,0.,100.);
-  pGammaTPC_antiLambda_protron = new TProfile("pGammaTPC_antiLambda_protron","",20,0.,100.);
-  pGammaRDM_antiLambda_protron = new TProfile("pGammaRDM_antiLambda_protron","",20,0.,100.);
+  pDelta_antiLambda_proton = new TProfile("pDelta_antiLambda_proton","",20,0.,100.);
+  pGammaTPC_antiLambda_proton = new TProfile("pGammaTPC_antiLambda_proton","",20,0.,100.);
+  pGammaRDM_antiLambda_proton = new TProfile("pGammaRDM_antiLambda_proton","",20,0.,100.);
   //lambda - p-
-  pDelta_lambda_antiProtron = new TProfile("pDelta_lambda_antiProtron","",20,0.,100.);
-  pGammaTPC_lambda_antiProtron = new TProfile("pGammaTPC_lambda_antiProtron","",20,0.,100.);
-  pGammaRDM_lambda_antiProtron = new TProfile("pGammaRDM_lambda_antiProtron","",20,0.,100.);
+  pDelta_lambda_antiProton = new TProfile("pDelta_lambda_antiProton","",20,0.,100.);
+  pGammaTPC_lambda_antiProton = new TProfile("pGammaTPC_lambda_antiProton","",20,0.,100.);
+  pGammaRDM_lambda_antiProton = new TProfile("pGammaRDM_lambda_antiProton","",20,0.,100.);
   //antiLambda - p-
-  pDelta_antiLambda_antiProtron = new TProfile("pDelta_antiLambda_antiProtron","",20,0.,100.);
-  pGammaTPC_antiLambda_antiProtron = new TProfile("pGammaTPC_antiLambda_antiProtron","",20,0.,100.);
-  pGammaRDM_antiLambda_antiProtron = new TProfile("pGammaRDM_antiLambda_antiProtron","",20,0.,100.);
+  pDelta_antiLambda_antiProton = new TProfile("pDelta_antiLambda_antiProton","",20,0.,100.);
+  pGammaTPC_antiLambda_antiProton = new TProfile("pGammaTPC_antiLambda_antiProton","",20,0.,100.);
+  pGammaRDM_antiLambda_antiProton = new TProfile("pGammaRDM_antiLambda_antiProton","",20,0.,100.);
 
   mOutputList->Add(pDelta_lambda_hPos);
   mOutputList->Add(pGammaTPC_lambda_hPos);
@@ -1313,18 +1318,18 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   mOutputList->Add(pDelta_antiLambda_hNeg);
   mOutputList->Add(pGammaTPC_antiLambda_hNeg);
   mOutputList->Add(pGammaRDM_antiLambda_hNeg);
-  mOutputList->Add(pDelta_lambda_protron);
-  mOutputList->Add(pGammaTPC_lambda_protron);
-  mOutputList->Add(pGammaRDM_lambda_protron);
-  mOutputList->Add(pDelta_antiLambda_protron);
-  mOutputList->Add(pGammaTPC_antiLambda_protron);
-  mOutputList->Add(pGammaRDM_antiLambda_protron);
-  mOutputList->Add(pDelta_lambda_antiProtron);
-  mOutputList->Add(pGammaTPC_lambda_antiProtron);
-  mOutputList->Add(pGammaRDM_lambda_antiProtron);
-  mOutputList->Add(pDelta_antiLambda_antiProtron);
-  mOutputList->Add(pGammaTPC_antiLambda_antiProtron);
-  mOutputList->Add(pGammaRDM_antiLambda_antiProtron);
+  mOutputList->Add(pDelta_lambda_proton);
+  mOutputList->Add(pGammaTPC_lambda_proton);
+  mOutputList->Add(pGammaRDM_lambda_proton);
+  mOutputList->Add(pDelta_antiLambda_proton);
+  mOutputList->Add(pGammaTPC_antiLambda_proton);
+  mOutputList->Add(pGammaRDM_antiLambda_proton);
+  mOutputList->Add(pDelta_lambda_antiProton);
+  mOutputList->Add(pGammaTPC_lambda_antiProton);
+  mOutputList->Add(pGammaRDM_lambda_antiProton);
+  mOutputList->Add(pDelta_antiLambda_antiProton);
+  mOutputList->Add(pGammaTPC_antiLambda_antiProton);
+  mOutputList->Add(pGammaRDM_antiLambda_antiProton);
 
   PostData(1,mOutputList);
 }
@@ -1839,21 +1844,21 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
 
       //pion - pion
       //pi+ - pi+
-      if(type_1 == 221 && type_2 == 221)
+      if(type_1 == 211 && type_2 == 211)
       {
         pDelta_pion_pion->Fill(cent,delta);
         pGammaTPC_pion_pion->Fill(cent,gammaTPC);
         pGammaRDM_pion_pion->Fill(cent,gammaRDM);
       }
       //pi- - pi-
-      if(type_1 == -221 && type_2 == -221)
+      if(type_1 == -211 && type_2 == -211)
       {
         pDelta_antiPion_antiPion->Fill(cent,delta);
         pGammaTPC_antiPion_antiPion->Fill(cent,gammaTPC);
         pGammaRDM_antiPion_antiPion->Fill(cent,gammaRDM);
       }
       //pi+ - pi-
-      if(type_1 == 221 && type_2 == -221)
+      if(type_1 == 211 && type_2 == -211)
       {
         pDelta_pion_antiPion->Fill(cent,delta);
         pGammaTPC_pion_antiPion->Fill(cent,gammaTPC);
@@ -1999,9 +2004,9 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
     //Lambda
     for (vector<double>::size_type jLambda = 0; jLambda < vecLambdaPhi.size(); jLambda++)
     {
-      double phi_lambda =  vecAntiLambdaPhi[jLambda];
-      short  id_posDaughter = vecAntiLambdaPosID[jLambda];
-      short  id_negDaughter = vecAntiLambdaNegID[jLambda];
+      double phi_lambda =  vecLambdaPhi[jLambda];
+      short  id_posDaughter = vecLambdaPosID[jLambda];
+      short  id_negDaughter = vecLambdaNegID[jLambda];
       if(id_1 == id_posDaughter || id_1 == id_negDaughter) continue;
 
       //TPC Event Plane deducted autocorrelation
@@ -2042,16 +2047,16 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       //lambda - p+
       if(type_1 == 2212)
       {
-        pDelta_lambda_hPos->Fill(cent,delta);
-        pGammaTPC_lambda_hPos->Fill(cent,gammaTPC);
-        pGammaRDM_lambda_hPos->Fill(cent,gammaRDM);
+        pDelta_lambda_proton->Fill(cent,delta);
+        pGammaTPC_lambda_proton->Fill(cent,gammaTPC);
+        pGammaRDM_lambda_proton->Fill(cent,gammaRDM);
       }
       //lambda - p-
-      if(type_1 < -2212)
+      if(type_1 == -2212)
       {
-        pDelta_lambda_hNeg->Fill(cent,delta);
-        pGammaTPC_lambda_hNeg->Fill(cent,gammaTPC);
-        pGammaRDM_lambda_hNeg->Fill(cent,gammaRDM);
+        pDelta_lambda_antiProton->Fill(cent,delta);
+        pGammaTPC_lambda_antiProton->Fill(cent,gammaTPC);
+        pGammaRDM_lambda_antiProton->Fill(cent,gammaRDM);
       }
     }
 
@@ -2101,16 +2106,16 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       //antiLambda - p+
       if(type_1 == 2212)
       {
-        pDelta_antiLambda_hPos->Fill(cent,delta);
-        pGammaTPC_antiLambda_hPos->Fill(cent,gammaTPC);
-        pGammaRDM_antiLambda_hPos->Fill(cent,gammaRDM);
+        pDelta_antiLambda_proton->Fill(cent,delta);
+        pGammaTPC_antiLambda_proton->Fill(cent,gammaTPC);
+        pGammaRDM_antiLambda_proton->Fill(cent,gammaRDM);
       }
       //antiLambda - p-
-      if(type_1 < -2212)
+      if(type_1 == -2212)
       {
-        pDelta_antiLambda_hNeg->Fill(cent,delta);
-        pGammaTPC_antiLambda_hNeg->Fill(cent,gammaTPC);
-        pGammaRDM_antiLambda_hNeg->Fill(cent,gammaRDM);
+        pDelta_antiLambda_antiProton->Fill(cent,delta);
+        pGammaTPC_antiLambda_antiProton->Fill(cent,gammaTPC);
+        pGammaRDM_antiLambda_antiProton->Fill(cent,gammaRDM);
       }
     }
   }

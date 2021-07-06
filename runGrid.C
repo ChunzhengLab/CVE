@@ -344,7 +344,7 @@ AliAnalysisGrid* CreateAlienHandler(TString mode)
   plugin->SetNtestFiles(3);
 
   // Define alien work directory where all files will be copied. Relative to alien $HOME.
-  plugin->SetGridWorkingDir("Processing");
+  plugin->SetGridWorkingDir("cve");
   // Declare alien output directory. Relative to working directory.
   plugin->SetGridOutputDir("output");
   // Declare the analysis source files names separated by blancs. To be compiled runtime
