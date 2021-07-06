@@ -2186,9 +2186,9 @@ bool AliAnalysisTaskCVE::IsGoodV0(AliAODv0 *aodV0) {
   double dDCA = aodV0->DcaV0Daughters();
   if ( dDCA > fV0DcaBetweenDaughtersMax ) return kFALSE;
   double dPt = aodV0->Pt();
-  if(dPt < fV0PtMin) return kFALSE;
-  double dEta = aodV0->RapLambda();
-  if(dEta < fV0RapidityMax) return kFALSE;
+  if( dPt < fV0PtMin ) return kFALSE;
+  double dRapidity = aodV0->RapLambda();
+  if( TMath::Abs(dRapidity) > fV0RapidityMax ) return kFALSE;
   return kTRUE;
 }
 
