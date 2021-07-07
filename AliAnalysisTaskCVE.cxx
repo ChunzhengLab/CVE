@@ -1642,7 +1642,7 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
             hAntiLambdaDcaToPrimVertex[0]->Fill(dcaToPV);
             hAntiLambdaCPA[0]->Fill(CPA);
             hAntiLambdaDecayLength[0]->Fill(dl);
-            hAntiLambdaMass[0]->Fill(massLambda);
+            hAntiLambdaMass[0]->Fill(massAntiLambda);
 
           if (TMath::Abs(massAntiLambda - fMassMean) < fLambdaMassCut)
           {
