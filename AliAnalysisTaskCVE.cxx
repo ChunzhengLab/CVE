@@ -743,11 +743,11 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   hEvtCount->GetXaxis()->SetBinLabel(14,"Utils");
   // hEvtCount->GetXaxis()->SetBinLabel(15,"MultSel");
 
-  hEvtCount->GetXaxis()->SetBinLabel(16,"TPCEP");
-  hEvtCount->GetXaxis()->SetBinLabel(17,"VZEROEP");
-  hEvtCount->GetXaxis()->SetBinLabel(18,"ZDCEP");
-  hEvtCount->GetXaxis()->SetBinLabel(19,"CME");
-  hEvtCount->GetXaxis()->SetBinLabel(20,"CVE");
+  hEvtCount->GetXaxis()->SetBinLabel(16,"Random plane");
+  hEvtCount->GetXaxis()->SetBinLabel(17,"TPC plane");
+  hEvtCount->GetXaxis()->SetBinLabel(18,"VZERO plane");
+  hEvtCount->GetXaxis()->SetBinLabel(19,"ZDC plane");
+  hEvtCount->GetXaxis()->SetBinLabel(20,"loops end");
   mOutputList->Add(hEvtCount);
 
   // 10h
@@ -1666,12 +1666,13 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
   //RDM Plane
   double psiRDM = gRandom->Uniform(0,TMath::Pi());
   hPsiRDM -> Fill(runNumBin, centBin, psiRDM);
+  hEvtCount->Fill(16);
   //TPC Plane
   TVector2 QTPC;
   QTPC.Set(sumCos,sumSin);
   double psiTPC = QTPC.Phi();
   hPsiTPC -> Fill(runNumBin, centBin, psiTPC);
-  hEvtCount->Fill(16);
+  hEvtCount->Fill(17);
 
   for (vector<double>::size_type iTrk = 0; iTrk < vecPt.size(); iTrk++) {
     short  id_1  = vecID[iTrk];
@@ -1733,7 +1734,7 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
         pGammaTPVVsMeanPt_hNeg_hNeg[centBin]   ->Fill((pt_1 + pt_2)/2., gammaTPC);
         pGammaTPCVsDeltaEta_hNeg_hNeg[centBin] ->Fill(TMath::Abs(eta_1 - eta_2), gammaTPC);
       }
-      if(type_1 * type_2 < 0)
+      if(type_1 > 0 && type_2 < 0)
       {
         pDelta_hPos_hNeg->Fill(cent,delta);
         pGammaRDM_hPos_hNeg->Fill(cent,gammaRDM);
@@ -2122,8 +2123,7 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
     }
   }
 
-
-  hEvtCount->Fill(19);
+  hEvtCount->Fill(20);
   PostData(1,mOutputList);
 }
 
