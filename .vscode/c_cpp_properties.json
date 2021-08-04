@@ -4,14 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/conrad/root/include",
-                "/home/conrad/ALICE/AliRoot/ANALYSIS/ANALYSIS/",
-                "/home/conrad/ALICE/AliRoot/STEER",
-                "/home/conrad/ALICE/AliRoot/STEER/STEERBase",
-                "/home/conrad/ALICE/AliRoot/STEER/AOD",
-                "/home/conrad/ALICE/AliRoot/EMCAL/EMCALUtils",
-                "/home/conrad/ALICE/AliPhysics/OADB",
-                "/home/conrad/ALICE/AliRoot/ANALYSIS/ANALYSISalice/"
+                "/home/chunzheng/文档/root_include/",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/ANALYSIS/ANALYSIS/",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/STEER",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/STEER/STEERBase",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/STEER/AOD",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/EMCAL/EMCALUtils",
+                "/home/chunzheng/alice/AliPhysics/OADB",
+                "/home/chunzheng/alice/sw/SOURCES/AliRoot/v5-09-57h/v5-09-57h/ANALYSIS/ANALYSISalice/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
