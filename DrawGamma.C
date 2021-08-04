@@ -486,4 +486,130 @@ void DrawGamma()
   pGammaTPCVsPt_proton_oppo_3040_rebin->SetMarkerColor(kRed);
   pGammaTPCVsPt_proton_oppo_3040_rebin->SetMarkerStyle(kOpenSquare);
   pGammaTPCVsPt_proton_oppo_3040_rebin->Draw("SAME");
+
+
+  TProfile *pDelta_lambda_proton = (TProfile *)inputList->FindObject("pDelta_lambda_proton");
+  TProfile *pDelta_lambda_antiProton = (TProfile *)inputList->FindObject("pDelta_lambda_antiProton");
+  TProfile *pDelta_antiLambda_proton = (TProfile *)inputList->FindObject("pDelta_antiLambda_proton");
+  TProfile *pDelta_antiLambda_antiProton = (TProfile *)inputList->FindObject("pDelta_antiLambda_antiProton");
+
+  TProfile *pGammaRDM_lambda_proton = (TProfile *)inputList->FindObject("pGammaRDM_lambda_proton");
+  TProfile *pGammaRDM_lambda_antiProton = (TProfile *)inputList->FindObject("pGammaRDM_lambda_antiProton");
+  TProfile *pGammaRDM_antiLambda_proton = (TProfile *)inputList->FindObject("pGammaRDM_antiLambda_proton");
+  TProfile *pGammaRDM_antiLambda_antiProton = (TProfile *)inputList->FindObject("pGammaRDM_antiLambda_antiProton");
+
+  TProfile *pGammaTPC_lambda_proton = (TProfile *)inputList->FindObject("pGammaTPC_lambda_proton");
+  TProfile *pGammaTPC_lambda_antiProton = (TProfile *)inputList->FindObject("pGammaTPC_lambda_antiProton");
+  TProfile *pGammaTPC_antiLambda_proton = (TProfile *)inputList->FindObject("pGammaTPC_antiLambda_proton");
+  TProfile *pGammaTPC_antiLambda_antiProton = (TProfile *)inputList->FindObject("pGammaTPC_antiLambda_antiProton");
+
+
+  TProfile *pDelta_lambda_hPos = (TProfile *)inputList->FindObject("pDelta_lambda_hPos");
+  TProfile *pDelta_lambda_hNeg = (TProfile *)inputList->FindObject("pDelta_lambda_hNeg");
+  TProfile *pDelta_antiLambda_hPos = (TProfile *)inputList->FindObject("pDelta_antiLambda_hPos");
+  TProfile *pDelta_antiLambda_hNeg = (TProfile *)inputList->FindObject("pDelta_antiLambda_hNeg");
+
+  TProfile *pGammaRDM_lambda_hPos = (TProfile *)inputList->FindObject("pGammaRDM_lambda_hPos");
+  TProfile *pGammaRDM_lambda_hNeg = (TProfile *)inputList->FindObject("pGammaRDM_lambda_hNeg");
+  TProfile *pGammaRDM_antiLambda_hPos = (TProfile *)inputList->FindObject("pGammaRDM_antiLambda_hPos");
+  TProfile *pGammaRDM_antiLambda_hNeg = (TProfile *)inputList->FindObject("pGammaRDM_antiLambda_hNeg");
+
+  TProfile *pGammaTPC_lambda_hPos = (TProfile *)inputList->FindObject("pGammaTPC_lambda_hPos");
+  TProfile *pGammaTPC_lambda_hNeg = (TProfile *)inputList->FindObject("pGammaTPC_lambda_hNeg");
+  TProfile *pGammaTPC_antiLambda_hPos = (TProfile *)inputList->FindObject("pGammaTPC_antiLambda_hPos");
+  TProfile *pGammaTPC_antiLambda_hNeg = (TProfile *)inputList->FindObject("pGammaTPC_antiLambda_hNeg");
+
+
+  TProfile* pDelta_lambda_h_same = new TProfile("pDelta_lambda_h_same","",20,0.,100.);
+  TProfile* pDelta_lambda_h_oppo = new TProfile("pDelta_lambda_h_oppo","",20,0.,100.);
+  TProfile* pGammaRDM_lambda_h_same = new TProfile("pGammaRDM_lambda_h_same","",20,0.,100.);
+  TProfile* pGammaRDM_lambda_h_oppo = new TProfile("pGammaRDM_lambda_h_oppo","",20,0.,100.);
+  TProfile* pGammaTPC_lambda_h_same = new TProfile("pGammaTPC_lambda_h_same","",20,0.,100.);
+  TProfile* pGammaTPC_lambda_h_oppo = new TProfile("pGammaTPC_lambda_h_oppo","",20,0.,100.);
+
+  TProfile* pDelta_lambda_proton_same = new TProfile("pDelta_lambda_proton_same","",20,0.,100.);
+  TProfile* pDelta_lambda_proton_oppo = new TProfile("pDelta_lambda_proton_oppo","",20,0.,100.);
+  TProfile* pGammaRDM_lambda_proton_same = new TProfile("pGammaRDM_lambda_proton_same","",20,0.,100.);
+  TProfile* pGammaRDM_lambda_proton_oppo = new TProfile("pGammaRDM_lambda_proton_oppo","",20,0.,100.);
+  TProfile* pGammaTPC_lambda_proton_same = new TProfile("pGammaTPC_lambda_proton_same","",20,0.,100.);
+  TProfile* pGammaTPC_lambda_proton_oppo = new TProfile("pGammaTPC_lambda_proton_oppo","",20,0.,100.);
+
+  pDelta_lambda_h_same -> Add(pDelta_lambda_hPos);
+  pDelta_lambda_h_same -> Add(pDelta_antiLambda_hNeg);
+  pDelta_lambda_h_oppo -> Add(pDelta_lambda_hNeg);
+  pDelta_lambda_h_oppo -> Add(pDelta_antiLambda_hPos);
+
+  pGammaRDM_lambda_h_same -> Add(pGammaRDM_lambda_hPos);
+  pGammaRDM_lambda_h_same -> Add(pGammaRDM_antiLambda_hNeg);
+  pGammaRDM_lambda_h_oppo -> Add(pGammaRDM_lambda_hNeg);
+  pGammaRDM_lambda_h_oppo -> Add(pGammaRDM_antiLambda_hPos);
+
+  pGammaTPC_lambda_h_same -> Add(pGammaTPC_lambda_hPos);
+  pGammaTPC_lambda_h_same -> Add(pGammaTPC_antiLambda_hNeg);
+  pGammaTPC_lambda_h_oppo -> Add(pGammaTPC_lambda_hNeg);
+  pGammaTPC_lambda_h_oppo -> Add(pGammaTPC_antiLambda_hPos);
+
+  pDelta_lambda_proton_same -> Add(pDelta_lambda_proton);
+  pDelta_lambda_proton_same -> Add(pDelta_antiLambda_antiProton);
+  pDelta_lambda_proton_oppo -> Add(pDelta_lambda_antiProton);
+  pDelta_lambda_proton_oppo -> Add(pDelta_antiLambda_proton);
+
+  pGammaRDM_lambda_proton_same -> Add(pGammaRDM_lambda_proton);
+  pGammaRDM_lambda_proton_same -> Add(pGammaRDM_antiLambda_antiProton);
+  pGammaRDM_lambda_proton_oppo -> Add(pGammaRDM_lambda_antiProton);
+  pGammaRDM_lambda_proton_oppo -> Add(pGammaRDM_antiLambda_proton);
+
+  pGammaTPC_lambda_proton_same -> Add(pGammaTPC_lambda_proton);
+  pGammaTPC_lambda_proton_same -> Add(pGammaTPC_antiLambda_antiProton);
+  pGammaTPC_lambda_proton_oppo -> Add(pGammaTPC_lambda_antiProton);
+  pGammaTPC_lambda_proton_oppo -> Add(pGammaTPC_antiLambda_proton);
+
+
+  pDelta_lambda_h_same ->Rebin();
+  pDelta_lambda_h_oppo ->Rebin();
+  pGammaRDM_lambda_h_same ->Rebin();
+  pGammaRDM_lambda_h_oppo ->Rebin();
+  pGammaTPC_lambda_h_same ->Rebin();
+  pGammaTPC_lambda_h_oppo ->Rebin();
+
+  pDelta_lambda_proton_same ->Rebin();
+  pDelta_lambda_proton_oppo ->Rebin();
+  pGammaRDM_lambda_proton_same ->Rebin();
+  pGammaRDM_lambda_proton_oppo ->Rebin();
+  pGammaTPC_lambda_proton_same ->Rebin();
+  pGammaTPC_lambda_proton_oppo ->Rebin();
+
+  
+  TCanvas *plotCVE = new TCanvas("plotCVE", "plotCVE", 1200, 400);
+  plotCVE->Divide(3, 1);
+  dummy_0->SetTitle("CVE #delta = <cos(#phi_{#alpha} - #phi_{#beta})>");
+  plotCVE->cd(1);
+  dummy_0->Draw("SAME");
+  pDelta_lambda_h_same->SetLineColor(kRed);
+  pDelta_lambda_h_same->Draw("SAME");
+  pDelta_lambda_h_oppo->SetLineColor(kBlue);
+  pDelta_lambda_h_oppo->Draw("same");
+  // pDelta_lambda_proton_same->Draw("SAME");
+  // pDelta_lambda_proton_oppo->Draw("same");
+
+  plotCVE->cd(2);
+  dummy_2->SetTitle("CVE #gamma_{RDM} = <cos(#phi_{#alpha} + #phi_{#beta} - 2#Psi_{Random})>");
+  dummy_2->Draw();
+  pGammaRDM_lambda_h_same->SetLineColor(kRed);
+  pGammaRDM_lambda_h_same->Draw("SAME");
+  pGammaRDM_lambda_h_oppo->SetLineColor(kBlue);
+  pGammaRDM_lambda_h_oppo->Draw("same");
+  // pGammaRDM_lambda_proton_same->Draw("SAME");
+  // pGammaRDM_lambda_proton_oppo->Draw("same");
+  
+
+  plotCVE->cd(3);
+  dummy_3->SetTitle("CVE #gamma_{TPC} = <cos(#phi_{#alpha} + #phi_{#beta} - 2#Psi_{CVE})>");
+  dummy_3->Draw();
+  pGammaTPC_lambda_h_same->SetLineColor(kRed);
+  pGammaTPC_lambda_h_same->Draw("SAME");
+  pGammaTPC_lambda_h_oppo->SetLineColor(kBlue);
+  pGammaTPC_lambda_h_oppo->Draw("same");
+  // pGammaTPC_lambda_proton_same->Draw("SAME");
+  // pGammaTPC_lambda_proton_oppo->Draw("same");
 }

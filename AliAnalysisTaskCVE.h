@@ -101,9 +101,11 @@ private:
   TH1D *hVz[2];
 
   //Random Event Plane
-  TH3D *hPsiRDM;
+  TH3D *hPsi2RDM;
+  TH3D *hPsi3RDM;
   //TPC Event Plane
-  TH3D *hPsiTPC;
+  TH3D *hPsi2TPC;
+  TH3D *hPsi3TPC;
 
   // Track-wise
   TH1D *hPt[2];
@@ -367,6 +369,52 @@ private:
   TProfile *pDelta_antiLambda_antiProton;
   TProfile *pGammaTPC_antiLambda_antiProton;
   TProfile *pGammaRDM_antiLambda_antiProton;
+
+  //N(S) (12,-0.5,0.5)
+  TH1D* hNDeltaSPsi2[10];
+  //N(S_sf)
+  TH1D* hNDeltaSPsi2_sf[10];
+  //N(SVert)
+  TH1D* hNDeltaSVertPsi2[10];
+  //N(SVert_sf)
+  TH1D* hNDeltaSVertPsi2_sf[10];
+
+  //N(S) (12,-0.5,0.5)
+  TH1D* hNDeltaSPsi3[10];
+  //N(S_sf)
+  TH1D* hNDeltaSPsi3_sf[10];
+  //N(SVert)
+  TH1D* hNDeltaSVertPsi3[10];
+  //N(SVert_sf)
+  TH1D* hNDeltaSVertPsi3_sf[10];
+
+  TProfile *pDelta_hPos_hPos_sumPx[10];
+  TProfile *pDelta_hPos_hPos_sumPy[10];
+  TProfile *pDelta_hPos_hPos_sumPt[10];
+
+  TProfile *pDelta_hNeg_hNeg_sumPx[10];
+  TProfile *pDelta_hNeg_hNeg_sumPy[10];
+  TProfile *pDelta_hNeg_hNeg_sumPt[10];
+
+  TProfile *pDelta_hPos_hNeg_sumPx[10];
+  TProfile *pDelta_hPos_hNeg_sumPy[10];
+  TProfile *pDelta_hPos_hNeg_sumPt[10];
+
+  TProfile *pGamma_hPos_hPos_sumPx[10];
+  TProfile *pGamma_hPos_hPos_sumPy[10];
+  TProfile *pGamma_hPos_hPos_sumPt[10];
+
+  TProfile *pGamma_hNeg_hNeg_sumPx[10];
+  TProfile *pGamma_hNeg_hNeg_sumPy[10];
+  TProfile *pGamma_hNeg_hNeg_sumPt[10];
+
+  TProfile *pGamma_hPos_hNeg_sumPx[10];
+  TProfile *pGamma_hPos_hNeg_sumPy[10];
+  TProfile *pGamma_hPos_hNeg_sumPt[10];
+
+  TH3D *pCent_qn_sumPx;
+  TH3D *pCent_qn_sumPy;
+  TH3D *pCent_qn_sumPt;
 
   AliAnalysisTaskCVE(const AliAnalysisTaskCVE &);
   AliAnalysisTaskCVE &operator=(const AliAnalysisTaskCVE &);

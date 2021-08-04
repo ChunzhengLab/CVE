@@ -98,7 +98,7 @@ fDaughtersDCAToPrimVtxMin(0.02),
 fDaughtersNsigma(3.),
 
 fMassMean(1.115683),
-fLambdaMassCut(0.01)
+fLambdaMassCut(0.005)
 
 
 {
@@ -119,9 +119,12 @@ fLambdaMassCut(0.01)
   for (int i=0; i<2; ++i) hVz[i]       = NULL;
 
   //Random Event Plane
-  hPsiRDM = NULL;
+  hPsi2RDM = NULL;
+  hPsi3RDM = NULL;
+
   //TPC Event Plane
-  hPsiTPC = NULL;
+  hPsi2TPC = NULL;
+  hPsi3TPC = NULL;
 
   // Track-wise
   for (int i=0; i<2; ++i) hPt[i]    = NULL;
@@ -438,9 +441,12 @@ fLambdaMassCut(0.01)
   for (int i=0; i<2; ++i) hVz[i]       = NULL;
 
   //Random Event Plane
-  hPsiRDM = NULL;
+  hPsi2RDM = NULL;
+  hPsi3RDM = NULL;
+
   //TPC Event Plane
-  hPsiTPC = NULL;
+  hPsi2TPC = NULL;
+  hPsi3TPC = NULL;
 
   // Track-wise
   for (int i=0; i<2; ++i) hPt[i]    = NULL;
@@ -787,11 +793,16 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
 
 
   //Random Event Plane
-  hPsiRDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
-  mOutputList->Add(hPsiRDM);
+  hPsi2RDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
+  hPsi3RDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, 2./3.*TMath::Pi());
+  mOutputList->Add(hPsi2RDM);
+  mOutputList->Add(hPsi3RDM);
+
   //TPC Event Plane
-  hPsiTPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
-  mOutputList->Add(hPsiTPC);
+  hPsi2TPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
+  hPsi3TPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, 2./3.*TMath::Pi());
+  mOutputList->Add(hPsi2TPC);
+  mOutputList->Add(hPsi3TPC);
 
   // track-wise
   hPt[0] = new TH1D("hPtBeforeCut", "", 200, 0., 20.);
@@ -1432,8 +1443,10 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
   vector<int>    vecType;
 
   //TPC QxQy
-  double sumCos = 0.;
-  double sumSin = 0.;
+  double sumCos2Phi = 0.;
+  double sumSin2Phi = 0.;
+  double sumCos3Phi = 0.;
+  double sumSin3Phi = 0.;
 
   int nTrk = fAOD->GetNumberOfTracks();
   for (int iTrk = 0; iTrk < nTrk; ++iTrk) {
@@ -1537,10 +1550,14 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
     vecID.push_back(id);
 
     //Qn
-    double cosnphi = TMath::Cos(2 * phi);
-    double sinnphi = TMath::Sin(2 * phi);
-    sumCos += cosnphi;
-    sumSin += sinnphi;
+    double cos2phi = TMath::Cos(2 * phi);
+    double sin2phi = TMath::Sin(2 * phi);
+    double cos3phi = TMath::Cos(3 * phi);
+    double sin3phi = TMath::Sin(3 * phi);
+    sumCos2Phi += cos2phi;
+    sumSin2Phi += sin2phi;
+    sumCos3Phi += cos3phi;
+    sumSin3Phi += sin3phi;
   }
 
 
@@ -1664,14 +1681,20 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
     }
 
   //RDM Plane
-  double psiRDM = gRandom->Uniform(0,TMath::Pi());
-  hPsiRDM -> Fill(runNumBin, centBin, psiRDM);
+  double psi2RDM = gRandom->Uniform(0,TMath::Pi());
+  hPsi2RDM -> Fill(runNumBin, centBin, psi2RDM);
+  double psi3RDM = gRandom->Uniform(0,2/3*TMath::Pi());
+  hPsi2RDM -> Fill(runNumBin, centBin, psi3RDM);
   hEvtCount->Fill(16);
   //TPC Plane
-  TVector2 QTPC;
-  QTPC.Set(sumCos,sumSin);
-  double psiTPC = QTPC.Phi();
-  hPsiTPC -> Fill(runNumBin, centBin, psiTPC);
+  TVector2 Q2TPC;
+  Q2TPC.Set(sumCos2Phi,sumSin2Phi);
+  double psi2TPC = Q2TPC.Phi()/2.;
+  hPsi2TPC -> Fill(runNumBin, centBin, psi2TPC);
+  TVector2 Q3TPC;
+  Q3TPC.Set(sumCos3Phi,sumSin3Phi);
+  double psi3TPC = Q3TPC.Phi()/3.;
+  hPsi3TPC -> Fill(runNumBin, centBin, psi3TPC);
   hEvtCount->Fill(17);
 
   for (vector<double>::size_type iTrk = 0; iTrk < vecPt.size(); iTrk++) {
@@ -1693,19 +1716,19 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       double qx = TMath::Cos(2 * phi_1) + TMath::Cos(2 * phi_2);
       double qy = TMath::Sin(2 * phi_1) + TMath::Sin(2 * phi_2);
       q.Set(qx,qy);
-      TVector2 QTmp = QTPC - q;
+      TVector2 QTmp = Q2TPC - q;
       double psiTPC_deAutoCor = QTmp.Phi()/mHarmonic;
 
       //delta
       double delta = TMath::Cos(phi_1 - phi_2);
       //gamma
-      double gammaRDM  = TMath::Cos(phi_1 + phi_2 - 2 * psiRDM);
+      double gammaRDM  = TMath::Cos(phi_1 + phi_2 - 2 * psi2RDM);
       double gammaTPC  = TMath::Cos(phi_1 + phi_2 - 2 * psiTPC_deAutoCor);
       //coscos sinsin
-      double coscosRDM = TMath::Cos(phi_1 - psiRDM) * TMath::Cos(phi_2 - psiRDM);
-      double sinsinRDM = TMath::Sin(phi_1 - psiRDM) * TMath::Sin(phi_2 - psiRDM);
-      double coscosTPC = TMath::Cos(phi_1 - psiTPC) * TMath::Cos(phi_2 - psiTPC);
-      double sinsinTPC = TMath::Sin(phi_1 - psiTPC) * TMath::Sin(phi_2 - psiTPC);
+      double coscosRDM = TMath::Cos(phi_1 - psi2RDM) * TMath::Cos(phi_2 - psi2RDM);
+      double sinsinRDM = TMath::Sin(phi_1 - psi2RDM) * TMath::Sin(phi_2 - psi2RDM);
+      double coscosTPC = TMath::Cos(phi_1 - psi2TPC) * TMath::Cos(phi_2 - psi2TPC);
+      double sinsinTPC = TMath::Sin(phi_1 - psi2TPC) * TMath::Sin(phi_2 - psi2TPC);
 
       //Inclusive
       if(type_1 > 0 && type_2 > 0)
@@ -2023,13 +2046,13 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       }
       TVector2 q;
       q.Set(qx,qy);
-      TVector2 QTmp = QTPC - q;
+      TVector2 QTmp = Q2TPC - q;
       double psiTPC_deAutoCor = QTmp.Phi()/mHarmonic;
 
       //delta
       double delta = TMath::Cos(phi_lambda - phi_1);
       //gamma
-      double gammaRDM  = TMath::Cos(phi_lambda + phi_1 - 2 * psiRDM);
+      double gammaRDM  = TMath::Cos(phi_lambda + phi_1 - 2 * psi2RDM);
       double gammaTPC  = TMath::Cos(phi_lambda + phi_1 - 2 * psiTPC_deAutoCor);
 
       //lambda - h+
@@ -2082,13 +2105,13 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       }
       TVector2 q;
       q.Set(qx,qy);
-      TVector2 QTmp = QTPC - q;
+      TVector2 QTmp = Q2TPC - q;
       double psiTPC_deAutoCor = QTmp.Phi()/mHarmonic;
 
       //delta
       double delta = TMath::Cos(phi_antiLambda - phi_1);
       //gamma
-      double gammaRDM  = TMath::Cos(phi_antiLambda + phi_1 - 2 * psiRDM);
+      double gammaRDM  = TMath::Cos(phi_antiLambda + phi_1 - 2 * psi2RDM);
       double gammaTPC  = TMath::Cos(phi_antiLambda + phi_1 - 2 * psiTPC_deAutoCor);
 
       //antiLambda - h+
