@@ -69,7 +69,7 @@ void MyAnalysis()
 // Add aditional AliRoot libraries
 
 // analysis source to be compiled at runtime (if any)
-   gROOT->ProcessLine(".L AliAnalysisTaskCVE.cxx+g");
+   gROOT->ProcessLine(".L AliAnalysisTaskChiralVorticalEffect.cxx+g");
 
 // read the analysis manager from file
    AliAnalysisManager *mgr = AliAnalysisAlien::LoadAnalysisManager("analysis.root");

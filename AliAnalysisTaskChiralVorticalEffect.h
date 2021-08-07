@@ -1,5 +1,5 @@
-#ifndef AliAnalysisTaskCVE_cxx
-#define AliAnalysisTaskCVE_cxx
+#ifndef AliAnalysisTaskChiralVorticalEffect_cxx
+#define AliAnalysisTaskChiralVorticalEffect_cxx
 
 //class TList;
 //class TH1F;
@@ -7,17 +7,17 @@
 //class TProfile;
 //class AliAnalysisUtils;
 
-//#include "AliAnalysisTaskSE.h"
+#include "AliAnalysisTaskSE.h"
 
 using std::cout;
 using std::endl;
 
-class AliAnalysisTaskCVE : public AliAnalysisTaskSE
+class AliAnalysisTaskChiralVorticalEffect : public AliAnalysisTaskSE
 {
 public:
-  AliAnalysisTaskCVE();
-  AliAnalysisTaskCVE(const char *name);
-  virtual ~AliAnalysisTaskCVE();
+  AliAnalysisTaskChiralVorticalEffect();
+  AliAnalysisTaskChiralVorticalEffect(const char *name);
+  virtual ~AliAnalysisTaskChiralVorticalEffect();
 
   virtual void UserCreateOutputObjects();
   virtual void UserExec(Option_t *option);
@@ -52,6 +52,9 @@ public:
   virtual void SetLambdaMassCut(double lambdaMassCut) { fLambdaMassCut = lambdaMassCut; }
 
 private:
+  AliAODEvent*            fAOD;           //! input event
+  TList*                  fOutputList;    //! output list
+
   double mHarmonic;
   unsigned int fFilterBit;
   double fPtMin;
@@ -91,7 +94,6 @@ private:
   double cent;
   int centBin;
 
-  TList *mOutputList;
   //Event-wise
   TH1I *hEvtCount;
   TH1I *hRunNumBin;
@@ -370,55 +372,9 @@ private:
   TProfile *pGammaTPC_antiLambda_antiProton;
   TProfile *pGammaRDM_antiLambda_antiProton;
 
-  //N(S) (12,-0.5,0.5)
-  TH1D* hNDeltaSPsi2[10];
-  //N(S_sf)
-  TH1D* hNDeltaSPsi2_sf[10];
-  //N(SVert)
-  TH1D* hNDeltaSVertPsi2[10];
-  //N(SVert_sf)
-  TH1D* hNDeltaSVertPsi2_sf[10];
+  AliAnalysisTaskChiralVorticalEffect(const AliAnalysisTaskChiralVorticalEffect &);
+  AliAnalysisTaskChiralVorticalEffect &operator=(const AliAnalysisTaskChiralVorticalEffect &);
 
-  //N(S) (12,-0.5,0.5)
-  TH1D* hNDeltaSPsi3[10];
-  //N(S_sf)
-  TH1D* hNDeltaSPsi3_sf[10];
-  //N(SVert)
-  TH1D* hNDeltaSVertPsi3[10];
-  //N(SVert_sf)
-  TH1D* hNDeltaSVertPsi3_sf[10];
-
-  TProfile *pDelta_hPos_hPos_sumPx[10];
-  TProfile *pDelta_hPos_hPos_sumPy[10];
-  TProfile *pDelta_hPos_hPos_sumPt[10];
-
-  TProfile *pDelta_hNeg_hNeg_sumPx[10];
-  TProfile *pDelta_hNeg_hNeg_sumPy[10];
-  TProfile *pDelta_hNeg_hNeg_sumPt[10];
-
-  TProfile *pDelta_hPos_hNeg_sumPx[10];
-  TProfile *pDelta_hPos_hNeg_sumPy[10];
-  TProfile *pDelta_hPos_hNeg_sumPt[10];
-
-  TProfile *pGamma_hPos_hPos_sumPx[10];
-  TProfile *pGamma_hPos_hPos_sumPy[10];
-  TProfile *pGamma_hPos_hPos_sumPt[10];
-
-  TProfile *pGamma_hNeg_hNeg_sumPx[10];
-  TProfile *pGamma_hNeg_hNeg_sumPy[10];
-  TProfile *pGamma_hNeg_hNeg_sumPt[10];
-
-  TProfile *pGamma_hPos_hNeg_sumPx[10];
-  TProfile *pGamma_hPos_hNeg_sumPy[10];
-  TProfile *pGamma_hPos_hNeg_sumPt[10];
-
-  TH3D *pCent_qn_sumPx;
-  TH3D *pCent_qn_sumPy;
-  TH3D *pCent_qn_sumPt;
-
-  AliAnalysisTaskCVE(const AliAnalysisTaskCVE &);
-  AliAnalysisTaskCVE &operator=(const AliAnalysisTaskCVE &);
-
-  ClassDef(AliAnalysisTaskCVE, 1);
+  ClassDef(AliAnalysisTaskChiralVorticalEffect, 1);
 };
 #endif

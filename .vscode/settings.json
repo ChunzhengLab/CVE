@@ -67,7 +67,10 @@
     "DrawTMCgamma.C": "cpp",
     "FitLambda.C": "cpp",
     "DoubleRatio.C": "cpp",
-    "AddTaskCVE.C": "cpp"
+    "AddTaskCVE.C": "cpp",
+    "runAnalysis.C": "cpp",
+    "AddMyTask.C": "cpp",
+    "AddTaskChiralVorticalEffect.C": "cpp"
   },
   "editor.fontFamily": "Consolas, 'Courier New', monospace"
 }

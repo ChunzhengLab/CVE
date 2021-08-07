@@ -62,16 +62,21 @@
 #include "AliPIDResponse.h"
 //#include "AliMultSelection.h"
 
-#include "AliAnalysisTaskCVE.h"
+#include "AliAnalysisTaskChiralVorticalEffect.h"
+
+class AliAnalysisTaskMyTask; 
 
 using std::cout;
 using std::endl;
 using std::vector;
 
-ClassImp(AliAnalysisTaskCVE);
+using namespace std;
+
+ClassImp(AliAnalysisTaskChiralVorticalEffect);
 
 //---------------------------------------------------
-AliAnalysisTaskCVE::AliAnalysisTaskCVE() : AliAnalysisTaskSE(),
+AliAnalysisTaskChiralVorticalEffect::AliAnalysisTaskChiralVorticalEffect() : AliAnalysisTaskSE(),
+fAOD(0), fOutputList(0),
 mHarmonic(2.),
 fFilterBit(1),
 fPtMin(0.2),
@@ -99,8 +104,6 @@ fDaughtersNsigma(3.),
 
 fMassMean(1.115683),
 fLambdaMassCut(0.005)
-
-
 {
   runNum       = -999;
   runNumBin    = -999;
@@ -109,7 +112,7 @@ fLambdaMassCut(0.005)
   cent         = -999;
   centBin      = -999;
 
-  mOutputList = NULL;
+  fOutputList = NULL;
   // Event-wise
   hEvtCount  = NULL;
   hRunNumBin = NULL;
@@ -394,7 +397,8 @@ fLambdaMassCut(0.005)
 }
 
 //---------------------------------------------------
-AliAnalysisTaskCVE::AliAnalysisTaskCVE(const char *name) : AliAnalysisTaskSE(name),
+AliAnalysisTaskChiralVorticalEffect::AliAnalysisTaskChiralVorticalEffect(const char *name) : AliAnalysisTaskSE(name),
+fAOD(0), fOutputList(0),
 mHarmonic(2.),
 fFilterBit(1),
 fPtMin(0.2),
@@ -422,7 +426,6 @@ fDaughtersNsigma(3.),
 
 fMassMean(1.115683),
 fLambdaMassCut(0.01)
-
 {
   runNum       = -999;
   runNumBin    = -999;
@@ -431,7 +434,7 @@ fLambdaMassCut(0.01)
   cent         = -999;
   centBin      = -999;
 
-  mOutputList = NULL;
+  fOutputList = NULL;
   // Event-wise
   hEvtCount  = NULL;
   hRunNumBin = NULL;
@@ -719,21 +722,22 @@ fLambdaMassCut(0.01)
 }
 
 //---------------------------------------------------
-AliAnalysisTaskCVE::~AliAnalysisTaskCVE()
+AliAnalysisTaskChiralVorticalEffect::~AliAnalysisTaskChiralVorticalEffect()
 {
+    // destructor
+    if(fOutputList) {
+        delete fOutputList;     // at the end of your task, it is deleted from memory by calling this function
+    }
 }
 
-//---------------------------------------------------
-void AliAnalysisTaskCVE::Terminate(Option_t *) 
-{
-}
+
 
 //---------------------------------------------------
-void AliAnalysisTaskCVE::UserCreateOutputObjects()
+void AliAnalysisTaskChiralVorticalEffect::UserCreateOutputObjects()
 {
-  mOutputList = new TList();
-  mOutputList->SetName(GetName());
-  mOutputList->SetOwner(kTRUE);
+  fOutputList = new TList();
+  fOutputList->SetName(GetName());
+  fOutputList->SetOwner(kTRUE);
 
   // event-wise
   hEvtCount = new TH1I("evtCount","",20, 1, 21);
@@ -754,7 +758,7 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   hEvtCount->GetXaxis()->SetBinLabel(18,"VZERO plane");
   hEvtCount->GetXaxis()->SetBinLabel(19,"ZDC plane");
   hEvtCount->GetXaxis()->SetBinLabel(20,"loops end");
-  mOutputList->Add(hEvtCount);
+  fOutputList->Add(hEvtCount);
 
   // 10h
   TString runNumList[91]={
@@ -776,55 +780,55 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   for (int i=0; i<91; ++i) {    
     hRunNumBin->GetXaxis()->SetBinLabel(i+1,runNumList[i].Data());
   }
-  mOutputList->Add(hRunNumBin);
+  fOutputList->Add(hRunNumBin);
 
   hCent = new TH1D("centrality","",100,0,100);
-  mOutputList->Add(hCent);
+  fOutputList->Add(hCent);
   hCentCorr[0] = new TH2D("centcorr0","",100,0,100,100,0,100);
   hCentCorr[1] = new TH2D("centcorr1","",100,0,100,100,0,100);
-  for (int i=0; i<2; ++i) mOutputList->Add(hCentCorr[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hCentCorr[i]);
 
   hVxy[0] = new TH2D("vxy0","",100,-0.5,0.5,100,-0.5,0.5);
   hVxy[1] = new TH2D("vxy1","",100,-0.5,0.5,100,-0.5,0.5);
   hVz[0]  = new TH1D("vz0","",200,-50,50);
   hVz[1]  = new TH1D("vz1","",200,-50,50);
-  for (int i=0; i<2; ++i) mOutputList->Add(hVxy[i]);
-  for (int i=0; i<2; ++i) mOutputList->Add(hVz[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hVxy[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hVz[i]);
 
 
   //Random Event Plane
   hPsi2RDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
   hPsi3RDM = new TH3D("hPsiRDM","",100, 0, 100, 10, 0, 10, 180, 0, 2./3.*TMath::Pi());
-  mOutputList->Add(hPsi2RDM);
-  mOutputList->Add(hPsi3RDM);
+  fOutputList->Add(hPsi2RDM);
+  fOutputList->Add(hPsi3RDM);
 
   //TPC Event Plane
   hPsi2TPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, TMath::Pi());
   hPsi3TPC = new TH3D("hPsiTPC","",100, 0, 100, 10, 0, 10, 180, 0, 2./3.*TMath::Pi());
-  mOutputList->Add(hPsi2TPC);
-  mOutputList->Add(hPsi3TPC);
+  fOutputList->Add(hPsi2TPC);
+  fOutputList->Add(hPsi3TPC);
 
   // track-wise
   hPt[0] = new TH1D("hPtBeforeCut", "", 200, 0., 20.);
   hPt[1] = new TH1D("hPtAfterCut", "", 200, 0., 20.);
-  for (int i=0; i<2; ++i) mOutputList->Add(hPt[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hPt[i]);
   hEta[0] = new TH1D("hEtaBeforeCut", "", 200, -10., 10.);
   hEta[1] = new TH1D("hEtaAfterCut",  "", 200, -10., 10.);
-  for (int i=0; i<2; ++i) mOutputList->Add(hEta[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hEta[i]);
   hPhi[0] = new TH1D("hPhiBeforeCut", "", 400, 0, 2*TMath::Pi());
   hPhi[1] = new TH1D("hPhiAfterCut", "", 400, 0, 2*TMath::Pi());
-  for (int i=0; i<2; ++i) mOutputList->Add(hPhi[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hPhi[i]);
   hNhits[0] = new TH1D("hNhitsBeforeCut", "", 200, 0., 200.);
   hNhits[1] = new TH1D("hNhitsAfterCut",  "", 200, 0., 200.);
-  for (int i=0; i<2; ++i) mOutputList->Add(hNhits[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hNhits[i]);
   hDcaXy[0] = new TH1D("hDcaXyBeforeCut", "", 100, 0., 10.);
   hDcaXy[1] = new TH1D("hDcaXyAfterCut",  "", 100, 0., 10.);
-  for (int i=0; i<2; ++i) mOutputList->Add(hDcaXy[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hDcaXy[i]);
   hDcaZ[0] = new TH1D("hDcaZBeforeCut", "", 100, 0., 10.);
   hDcaZ[1] = new TH1D("hDcaZAfterCut",  "", 100, 0., 10.);
-  for (int i=0; i<2; ++i) mOutputList->Add(hDcaZ[i]);
+  for (int i=0; i<2; ++i) fOutputList->Add(hDcaZ[i]);
   hPDedx = new TH2D("hPDedx", "", 400, -10., 10., 400, 0, 1000);
-  mOutputList->Add(hPDedx);
+  fOutputList->Add(hPDedx);
 
 
   //V0-wise
@@ -834,11 +838,11 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   hV0CPA = new TH1D("hV0CPA","", 1000, 0.9, 1.);
   hV0DecayLength = new TH1D("hV0DecayLength","",500,0,500.);
 
-  mOutputList->Add(hV0Pt);
-  mOutputList->Add(hV0Eta);
-  mOutputList->Add(hV0DcaToPrimVertex);
-  mOutputList->Add(hV0CPA);
-  mOutputList->Add(hV0DecayLength);
+  fOutputList->Add(hV0Pt);
+  fOutputList->Add(hV0Eta);
+  fOutputList->Add(hV0DcaToPrimVertex);
+  fOutputList->Add(hV0CPA);
+  fOutputList->Add(hV0DecayLength);
 
   hLambdaPt[0] = new TH1D("hLambdaPt_bfMassCut","", 200, 0., 20.);
   hLambdaPt[1] = new TH1D("hLambdaPt_afMassCut","", 200, 0., 20.);
@@ -854,13 +858,13 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   hLambdaMass[1] = new TH1D("hLambdaMass_afMassCut","",1000,1.,1.25);
   for (int i=0; i<10; ++i) hLambdaMassCent[i] = new TH1D(Form("hLambdaMassCent%i",i),"",1000,1.,1.25);
 
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaPt[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaEta[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaDcaToPrimVertex[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaCPA[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaDecayLength[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hLambdaMass[i]);
-  for (int i=0; i<10; ++i) mOutputList->Add(hLambdaMassCent[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaPt[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaEta[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaDcaToPrimVertex[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaCPA[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaDecayLength[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hLambdaMass[i]);
+  for (int i=0; i<10; ++i) fOutputList->Add(hLambdaMassCent[i]);
 
   hAntiLambdaPt[0] = new TH1D("hAntiLambdaPt_bfMassCut","", 200, 0., 20.);
   hAntiLambdaPt[1] = new TH1D("hAntiLambdaPt_afMassCut","", 200, 0., 20.);
@@ -876,13 +880,13 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   hAntiLambdaMass[1] = new TH1D("hAntiLambdaMass_afMassCut","",1000,1.,1.25);
   for (int i=0; i<10; ++i) hAntiLambdaMassCent[i] = new TH1D(Form("hAntiLambdaMassCent%i",i),"",1000,1.,1.25);
 
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaPt[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaEta[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaDcaToPrimVertex[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaCPA[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaDecayLength[i]);
-  for( int i=0; i<2; i++) mOutputList->Add(hAntiLambdaMass[i]);
-  for (int i=0; i<10; ++i) mOutputList->Add(hAntiLambdaMassCent[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaPt[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaEta[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaDcaToPrimVertex[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaCPA[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaDecayLength[i]);
+  for( int i=0; i<2; i++) fOutputList->Add(hAntiLambdaMass[i]);
+  for (int i=0; i<10; ++i) fOutputList->Add(hAntiLambdaMassCent[i]);
 
   //Inclusive
   //Delta
@@ -1086,201 +1090,201 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
 
   //Inclusive
   //Delta
-  mOutputList->Add(pDelta_hPos_hPos);
-  mOutputList->Add(pDelta_hNeg_hNeg);
-  mOutputList->Add(pDelta_hPos_hNeg);
+  fOutputList->Add(pDelta_hPos_hPos);
+  fOutputList->Add(pDelta_hNeg_hNeg);
+  fOutputList->Add(pDelta_hPos_hNeg);
   //Gamma
   //TPC Plane
-  mOutputList->Add(pGammaTPC_hPos_hPos);
-  mOutputList->Add(pGammaTPC_hNeg_hNeg);
-  mOutputList->Add(pGammaTPC_hPos_hNeg);
-  mOutputList->Add(pCosCosTPC_hPos_hPos);
-  mOutputList->Add(pCosCosTPC_hNeg_hNeg);
-  mOutputList->Add(pCosCosTPC_hPos_hNeg);
-  mOutputList->Add(pSinSinTPC_hPos_hPos);
-  mOutputList->Add(pSinSinTPC_hNeg_hNeg);
-  mOutputList->Add(pSinSinTPC_hPos_hNeg);
+  fOutputList->Add(pGammaTPC_hPos_hPos);
+  fOutputList->Add(pGammaTPC_hNeg_hNeg);
+  fOutputList->Add(pGammaTPC_hPos_hNeg);
+  fOutputList->Add(pCosCosTPC_hPos_hPos);
+  fOutputList->Add(pCosCosTPC_hNeg_hNeg);
+  fOutputList->Add(pCosCosTPC_hPos_hNeg);
+  fOutputList->Add(pSinSinTPC_hPos_hPos);
+  fOutputList->Add(pSinSinTPC_hNeg_hNeg);
+  fOutputList->Add(pSinSinTPC_hPos_hNeg);
   //Random Plane 
-  mOutputList->Add(pGammaRDM_hPos_hPos);
-  mOutputList->Add(pGammaRDM_hNeg_hNeg);
-  mOutputList->Add(pGammaRDM_hPos_hNeg);
-  mOutputList->Add(pCosCosRDM_hPos_hPos);
-  mOutputList->Add(pCosCosRDM_hNeg_hNeg);
-  mOutputList->Add(pCosCosRDM_hPos_hNeg);
-  mOutputList->Add(pSinSinRDM_hPos_hPos);
-  mOutputList->Add(pSinSinRDM_hNeg_hNeg);
-  mOutputList->Add(pSinSinRDM_hPos_hNeg);
+  fOutputList->Add(pGammaRDM_hPos_hPos);
+  fOutputList->Add(pGammaRDM_hNeg_hNeg);
+  fOutputList->Add(pGammaRDM_hPos_hNeg);
+  fOutputList->Add(pCosCosRDM_hPos_hPos);
+  fOutputList->Add(pCosCosRDM_hNeg_hNeg);
+  fOutputList->Add(pCosCosRDM_hPos_hNeg);
+  fOutputList->Add(pSinSinRDM_hPos_hPos);
+  fOutputList->Add(pSinSinRDM_hNeg_hNeg);
+  fOutputList->Add(pSinSinRDM_hPos_hNeg);
   //Diff
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaPt_hPos_hPos[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaPt_hPos_hNeg[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaPt_hNeg_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaPt_hPos_hPos[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaPt_hPos_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaPt_hNeg_hNeg[i]);
 
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPVVsMeanPt_hPos_hPos[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPVVsMeanPt_hPos_hNeg[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPVVsMeanPt_hNeg_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPVVsMeanPt_hPos_hPos[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPVVsMeanPt_hPos_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPVVsMeanPt_hNeg_hNeg[i]);
 
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaEta_hPos_hPos[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaEta_hPos_hNeg[i]);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsDeltaEta_hNeg_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaEta_hPos_hPos[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaEta_hPos_hNeg[i]);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsDeltaEta_hNeg_hNeg[i]);
 
 
   //pion - Inclusive
   // pi+ - h+
-  mOutputList->Add(pDelta_pion_hPos);
-  mOutputList->Add(pGammaTPC_pion_hPos);
-  mOutputList->Add(pGammaRDM_pion_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_pion_hPos[i]);
+  fOutputList->Add(pDelta_pion_hPos);
+  fOutputList->Add(pGammaTPC_pion_hPos);
+  fOutputList->Add(pGammaRDM_pion_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_pion_hPos[i]);
   // pi- - h+
-  mOutputList->Add(pDelta_antiPion_hPos);
-  mOutputList->Add(pGammaTPC_antiPion_hPos);
-  mOutputList->Add(pGammaRDM_antiPion_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiPion_hPos[i]);
+  fOutputList->Add(pDelta_antiPion_hPos);
+  fOutputList->Add(pGammaTPC_antiPion_hPos);
+  fOutputList->Add(pGammaRDM_antiPion_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiPion_hPos[i]);
   // pi+ - h-
-  mOutputList->Add(pDelta_pion_hNeg);
-  mOutputList->Add(pGammaTPC_pion_hNeg);
-  mOutputList->Add(pGammaRDM_pion_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_pion_hNeg[i]);
+  fOutputList->Add(pDelta_pion_hNeg);
+  fOutputList->Add(pGammaTPC_pion_hNeg);
+  fOutputList->Add(pGammaRDM_pion_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_pion_hNeg[i]);
   // pi- - h-
-  mOutputList->Add(pDelta_antiPion_hNeg);
-  mOutputList->Add(pGammaTPC_antiPion_hNeg);
-  mOutputList->Add(pGammaRDM_antiPion_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiPion_hNeg[i]);
+  fOutputList->Add(pDelta_antiPion_hNeg);
+  fOutputList->Add(pGammaTPC_antiPion_hNeg);
+  fOutputList->Add(pGammaRDM_antiPion_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiPion_hNeg[i]);
   //kaon - Inclusive
   // ka+ - h+
-  mOutputList->Add(pDelta_kaon_hPos);
-  mOutputList->Add(pGammaTPC_kaon_hPos);
-  mOutputList->Add(pGammaRDM_kaon_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_kaon_hPos[i]);
+  fOutputList->Add(pDelta_kaon_hPos);
+  fOutputList->Add(pGammaTPC_kaon_hPos);
+  fOutputList->Add(pGammaRDM_kaon_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_kaon_hPos[i]);
   // ka- - h+
-  mOutputList->Add(pDelta_antiKaon_hPos);
-  mOutputList->Add(pGammaTPC_antiKaon_hPos);
-  mOutputList->Add(pGammaRDM_antiKaon_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiKaon_hPos[i]);
+  fOutputList->Add(pDelta_antiKaon_hPos);
+  fOutputList->Add(pGammaTPC_antiKaon_hPos);
+  fOutputList->Add(pGammaRDM_antiKaon_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiKaon_hPos[i]);
   // ka+ - h-
-  mOutputList->Add(pDelta_kaon_hNeg);
-  mOutputList->Add(pGammaTPC_kaon_hNeg);
-  mOutputList->Add(pGammaRDM_kaon_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_kaon_hNeg[i]);
+  fOutputList->Add(pDelta_kaon_hNeg);
+  fOutputList->Add(pGammaTPC_kaon_hNeg);
+  fOutputList->Add(pGammaRDM_kaon_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_kaon_hNeg[i]);
   // ka- - h-
-  mOutputList->Add(pDelta_antiKaon_hNeg);
-  mOutputList->Add(pGammaTPC_antiKaon_hNeg);
-  mOutputList->Add(pGammaRDM_antiKaon_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiKaon_hNeg[i]);
+  fOutputList->Add(pDelta_antiKaon_hNeg);
+  fOutputList->Add(pGammaTPC_antiKaon_hNeg);
+  fOutputList->Add(pGammaRDM_antiKaon_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiKaon_hNeg[i]);
   //proton - Inclusive
   // p+ - h+
-  mOutputList->Add(pDelta_proton_hPos);
-  mOutputList->Add(pGammaTPC_proton_hPos);
-  mOutputList->Add(pGammaRDM_proton_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_proton_hPos[i]);
+  fOutputList->Add(pDelta_proton_hPos);
+  fOutputList->Add(pGammaTPC_proton_hPos);
+  fOutputList->Add(pGammaRDM_proton_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_proton_hPos[i]);
   // p- - h+
-  mOutputList->Add(pDelta_antiProton_hPos);
-  mOutputList->Add(pGammaTPC_antiProton_hPos);
-  mOutputList->Add(pGammaRDM_antiProton_hPos);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiProton_hPos[i]);
+  fOutputList->Add(pDelta_antiProton_hPos);
+  fOutputList->Add(pGammaTPC_antiProton_hPos);
+  fOutputList->Add(pGammaRDM_antiProton_hPos);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiProton_hPos[i]);
   // p+ - h-
-  mOutputList->Add(pDelta_proton_hNeg);
-  mOutputList->Add(pGammaTPC_proton_hNeg);
-  mOutputList->Add(pGammaRDM_proton_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_proton_hNeg[i]);
+  fOutputList->Add(pDelta_proton_hNeg);
+  fOutputList->Add(pGammaTPC_proton_hNeg);
+  fOutputList->Add(pGammaRDM_proton_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_proton_hNeg[i]);
   // p- - h-
-  mOutputList->Add(pDelta_antiProton_hNeg);
-  mOutputList->Add(pGammaTPC_antiProton_hNeg);
-  mOutputList->Add(pGammaRDM_antiProton_hNeg);
-  for(int i=0;i<10;i++) mOutputList->Add(pGammaTPCVsPt_antiProton_hNeg[i]);
+  fOutputList->Add(pDelta_antiProton_hNeg);
+  fOutputList->Add(pGammaTPC_antiProton_hNeg);
+  fOutputList->Add(pGammaRDM_antiProton_hNeg);
+  for(int i=0;i<10;i++) fOutputList->Add(pGammaTPCVsPt_antiProton_hNeg[i]);
 
 
   //pion - pion
   //pi+ - pi+
-  mOutputList->Add(pDelta_pion_pion);
-  mOutputList->Add(pGammaTPC_pion_pion);
-  mOutputList->Add(pGammaRDM_pion_pion);
+  fOutputList->Add(pDelta_pion_pion);
+  fOutputList->Add(pGammaTPC_pion_pion);
+  fOutputList->Add(pGammaRDM_pion_pion);
   //pi- - pi-
-  mOutputList->Add(pDelta_antiPion_antiPion);
-  mOutputList->Add(pGammaTPC_antiPion_antiPion);
-  mOutputList->Add(pGammaRDM_antiPion_antiPion);
+  fOutputList->Add(pDelta_antiPion_antiPion);
+  fOutputList->Add(pGammaTPC_antiPion_antiPion);
+  fOutputList->Add(pGammaRDM_antiPion_antiPion);
   //pi+ - pi-
-  mOutputList->Add(pDelta_pion_antiPion);
-  mOutputList->Add(pGammaTPC_pion_antiPion);
-  mOutputList->Add(pGammaRDM_pion_antiPion);
+  fOutputList->Add(pDelta_pion_antiPion);
+  fOutputList->Add(pGammaTPC_pion_antiPion);
+  fOutputList->Add(pGammaRDM_pion_antiPion);
   //kaon - kaon
   //ka+ - ka+
-  mOutputList->Add(pDelta_kaon_kaon);
-  mOutputList->Add(pGammaTPC_kaon_kaon);
-  mOutputList->Add(pGammaRDM_kaon_kaon);
+  fOutputList->Add(pDelta_kaon_kaon);
+  fOutputList->Add(pGammaTPC_kaon_kaon);
+  fOutputList->Add(pGammaRDM_kaon_kaon);
   //ka- - ka-
-  mOutputList->Add(pDelta_antiKaon_antiKaon);
-  mOutputList->Add(pGammaTPC_antiKaon_antiKaon);
-  mOutputList->Add(pGammaRDM_antiKaon_antiKaon);
+  fOutputList->Add(pDelta_antiKaon_antiKaon);
+  fOutputList->Add(pGammaTPC_antiKaon_antiKaon);
+  fOutputList->Add(pGammaRDM_antiKaon_antiKaon);
   //ka+ - ka-
-  mOutputList->Add(pDelta_kaon_antiKaon);
-  mOutputList->Add(pGammaTPC_kaon_antiKaon);
-  mOutputList->Add(pGammaRDM_kaon_antiKaon);
+  fOutputList->Add(pDelta_kaon_antiKaon);
+  fOutputList->Add(pGammaTPC_kaon_antiKaon);
+  fOutputList->Add(pGammaRDM_kaon_antiKaon);
   //proton - proton
   //p+ - p+
-  mOutputList->Add(pDelta_proton_proton);
-  mOutputList->Add(pGammaTPC_proton_proton);
-  mOutputList->Add(pGammaRDM_proton_proton);
+  fOutputList->Add(pDelta_proton_proton);
+  fOutputList->Add(pGammaTPC_proton_proton);
+  fOutputList->Add(pGammaRDM_proton_proton);
   //p- - p-
-  mOutputList->Add(pDelta_antiProton_antiProton);
-  mOutputList->Add(pGammaTPC_antiProton_antiProton);
-  mOutputList->Add(pGammaRDM_antiProton_antiProton);
+  fOutputList->Add(pDelta_antiProton_antiProton);
+  fOutputList->Add(pGammaTPC_antiProton_antiProton);
+  fOutputList->Add(pGammaRDM_antiProton_antiProton);
   //p+ - p-
-  mOutputList->Add(pDelta_proton_antiProton);
-  mOutputList->Add(pGammaTPC_proton_antiProton);
-  mOutputList->Add(pGammaRDM_proton_antiProton);
+  fOutputList->Add(pDelta_proton_antiProton);
+  fOutputList->Add(pGammaTPC_proton_antiProton);
+  fOutputList->Add(pGammaRDM_proton_antiProton);
 
 
   //pion - kaon
   // pi+ - k+
-  mOutputList->Add(pDelta_pion_kaon);
-  mOutputList->Add(pGammaTPC_pion_kaon);
-  mOutputList->Add(pGammaRDM_pion_kaon);
+  fOutputList->Add(pDelta_pion_kaon);
+  fOutputList->Add(pGammaTPC_pion_kaon);
+  fOutputList->Add(pGammaRDM_pion_kaon);
   // pi- - k+
-  mOutputList->Add(pDelta_antiPion_kaon);
-  mOutputList->Add(pGammaTPC_antiPion_kaon);
-  mOutputList->Add(pGammaRDM_antiPion_kaon);
+  fOutputList->Add(pDelta_antiPion_kaon);
+  fOutputList->Add(pGammaTPC_antiPion_kaon);
+  fOutputList->Add(pGammaRDM_antiPion_kaon);
   // pi+ - k-
-  mOutputList->Add(pDelta_pion_antiKaon);
-  mOutputList->Add(pGammaTPC_pion_antiKaon);
-  mOutputList->Add(pGammaRDM_pion_antiKaon);
+  fOutputList->Add(pDelta_pion_antiKaon);
+  fOutputList->Add(pGammaTPC_pion_antiKaon);
+  fOutputList->Add(pGammaRDM_pion_antiKaon);
   // pi- - k-
-  mOutputList->Add(pDelta_antiPion_antiKaon);
-  mOutputList->Add(pGammaTPC_antiPion_antiKaon);
-  mOutputList->Add(pGammaRDM_antiPion_antiKaon);
+  fOutputList->Add(pDelta_antiPion_antiKaon);
+  fOutputList->Add(pGammaTPC_antiPion_antiKaon);
+  fOutputList->Add(pGammaRDM_antiPion_antiKaon);
   //kaon - proton
   // k+ - p+
-  mOutputList->Add(pDelta_kaon_proton);
-  mOutputList->Add(pGammaTPC_kaon_proton);
-  mOutputList->Add(pGammaRDM_kaon_proton);
+  fOutputList->Add(pDelta_kaon_proton);
+  fOutputList->Add(pGammaTPC_kaon_proton);
+  fOutputList->Add(pGammaRDM_kaon_proton);
   // k- - p+
-  mOutputList->Add(pDelta_antiKaon_proton);
-  mOutputList->Add(pGammaTPC_antiKaon_proton);
-  mOutputList->Add(pGammaRDM_antiKaon_proton);
+  fOutputList->Add(pDelta_antiKaon_proton);
+  fOutputList->Add(pGammaTPC_antiKaon_proton);
+  fOutputList->Add(pGammaRDM_antiKaon_proton);
   // k+ - p-
-  mOutputList->Add(pDelta_kaon_antiProton);
-  mOutputList->Add(pGammaTPC_kaon_antiProton);
-  mOutputList->Add(pGammaRDM_kaon_antiProton);
+  fOutputList->Add(pDelta_kaon_antiProton);
+  fOutputList->Add(pGammaTPC_kaon_antiProton);
+  fOutputList->Add(pGammaRDM_kaon_antiProton);
   // k- - p-
-  mOutputList->Add(pDelta_antiKaon_antiProton);
-  mOutputList->Add(pGammaTPC_antiKaon_antiProton);
-  mOutputList->Add(pGammaRDM_antiKaon_antiProton);
+  fOutputList->Add(pDelta_antiKaon_antiProton);
+  fOutputList->Add(pGammaTPC_antiKaon_antiProton);
+  fOutputList->Add(pGammaRDM_antiKaon_antiProton);
   //proton - pi
   // p+ - pi+
-  mOutputList->Add(pDelta_proton_pion);
-  mOutputList->Add(pGammaTPC_proton_pion);
-  mOutputList->Add(pGammaRDM_proton_pion);
+  fOutputList->Add(pDelta_proton_pion);
+  fOutputList->Add(pGammaTPC_proton_pion);
+  fOutputList->Add(pGammaRDM_proton_pion);
   // p- - pi+
-  mOutputList->Add(pDelta_antiProton_pion);
-  mOutputList->Add(pGammaTPC_antiProton_pion);
-  mOutputList->Add(pGammaRDM_antiProton_pion);
+  fOutputList->Add(pDelta_antiProton_pion);
+  fOutputList->Add(pGammaTPC_antiProton_pion);
+  fOutputList->Add(pGammaRDM_antiProton_pion);
   // p+ - pi-
-  mOutputList->Add(pDelta_proton_antiPion);
-  mOutputList->Add(pGammaTPC_proton_antiPion);
-  mOutputList->Add(pGammaRDM_proton_antiPion);
+  fOutputList->Add(pDelta_proton_antiPion);
+  fOutputList->Add(pGammaTPC_proton_antiPion);
+  fOutputList->Add(pGammaRDM_proton_antiPion);
   // p- - pi-
-  mOutputList->Add(pDelta_antiProton_antiPion);
-  mOutputList->Add(pGammaTPC_antiProton_antiPion);
-  mOutputList->Add(pGammaRDM_antiProton_antiPion);
+  fOutputList->Add(pDelta_antiProton_antiPion);
+  fOutputList->Add(pGammaTPC_antiProton_antiPion);
+  fOutputList->Add(pGammaRDM_antiProton_antiPion);
 
 
   //lambda - h
@@ -1319,36 +1323,36 @@ void AliAnalysisTaskCVE::UserCreateOutputObjects()
   pGammaTPC_antiLambda_antiProton = new TProfile("pGammaTPC_antiLambda_antiProton","",20,0.,100.);
   pGammaRDM_antiLambda_antiProton = new TProfile("pGammaRDM_antiLambda_antiProton","",20,0.,100.);
 
-  mOutputList->Add(pDelta_lambda_hPos);
-  mOutputList->Add(pGammaTPC_lambda_hPos);
-  mOutputList->Add(pGammaRDM_lambda_hPos);
-  mOutputList->Add(pDelta_antiLambda_hPos);
-  mOutputList->Add(pGammaTPC_antiLambda_hPos);
-  mOutputList->Add(pGammaRDM_antiLambda_hPos);
-  mOutputList->Add(pDelta_lambda_hNeg);
-  mOutputList->Add(pGammaTPC_lambda_hNeg);
-  mOutputList->Add(pGammaRDM_lambda_hNeg);
-  mOutputList->Add(pDelta_antiLambda_hNeg);
-  mOutputList->Add(pGammaTPC_antiLambda_hNeg);
-  mOutputList->Add(pGammaRDM_antiLambda_hNeg);
-  mOutputList->Add(pDelta_lambda_proton);
-  mOutputList->Add(pGammaTPC_lambda_proton);
-  mOutputList->Add(pGammaRDM_lambda_proton);
-  mOutputList->Add(pDelta_antiLambda_proton);
-  mOutputList->Add(pGammaTPC_antiLambda_proton);
-  mOutputList->Add(pGammaRDM_antiLambda_proton);
-  mOutputList->Add(pDelta_lambda_antiProton);
-  mOutputList->Add(pGammaTPC_lambda_antiProton);
-  mOutputList->Add(pGammaRDM_lambda_antiProton);
-  mOutputList->Add(pDelta_antiLambda_antiProton);
-  mOutputList->Add(pGammaTPC_antiLambda_antiProton);
-  mOutputList->Add(pGammaRDM_antiLambda_antiProton);
+  fOutputList->Add(pDelta_lambda_hPos);
+  fOutputList->Add(pGammaTPC_lambda_hPos);
+  fOutputList->Add(pGammaRDM_lambda_hPos);
+  fOutputList->Add(pDelta_antiLambda_hPos);
+  fOutputList->Add(pGammaTPC_antiLambda_hPos);
+  fOutputList->Add(pGammaRDM_antiLambda_hPos);
+  fOutputList->Add(pDelta_lambda_hNeg);
+  fOutputList->Add(pGammaTPC_lambda_hNeg);
+  fOutputList->Add(pGammaRDM_lambda_hNeg);
+  fOutputList->Add(pDelta_antiLambda_hNeg);
+  fOutputList->Add(pGammaTPC_antiLambda_hNeg);
+  fOutputList->Add(pGammaRDM_antiLambda_hNeg);
+  fOutputList->Add(pDelta_lambda_proton);
+  fOutputList->Add(pGammaTPC_lambda_proton);
+  fOutputList->Add(pGammaRDM_lambda_proton);
+  fOutputList->Add(pDelta_antiLambda_proton);
+  fOutputList->Add(pGammaTPC_antiLambda_proton);
+  fOutputList->Add(pGammaRDM_antiLambda_proton);
+  fOutputList->Add(pDelta_lambda_antiProton);
+  fOutputList->Add(pGammaTPC_lambda_antiProton);
+  fOutputList->Add(pGammaRDM_lambda_antiProton);
+  fOutputList->Add(pDelta_antiLambda_antiProton);
+  fOutputList->Add(pGammaTPC_antiLambda_antiProton);
+  fOutputList->Add(pGammaRDM_antiLambda_antiProton);
 
-  PostData(1,mOutputList);
+  PostData(1,fOutputList);
 }
 
 //---------------------------------------------------
-void AliAnalysisTaskCVE::UserExec(Option_t *)
+void AliAnalysisTaskChiralVorticalEffect::UserExec(Option_t *)
 {
   hEvtCount->Fill(1);
 
@@ -1360,9 +1364,10 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
   if (!handler) {
     AliError(Form("%s: Could not get Input Handler", GetName()));
   } else hEvtCount->Fill(11);
-  AliAODEvent* fAOD = (AliAODEvent*)InputEvent();
+  fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
   if (!fAOD) {
     AliError(Form("%s: Could not get AOD event", GetName()));
+    return;
   } else hEvtCount->Fill(12);
   AliPIDResponse* fPID = handler->GetPIDResponse();
   if (!fPID) {
@@ -1450,7 +1455,7 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
 
   int nTrk = fAOD->GetNumberOfTracks();
   for (int iTrk = 0; iTrk < nTrk; ++iTrk) {
-    AliAODTrack* track = (AliAODTrack*)fAOD->GetTrack(iTrk);
+    AliAODTrack* track = static_cast<AliAODTrack*>(fAOD->GetTrack(iTrk));
     if (!track) {
       AliError(Form("%s: Could not get Track", GetName()));
       continue;
@@ -1506,7 +1511,6 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
     hDcaZ[0]->Fill(dcaz);
     if (fabs(dcaz)>fDcaZMax) continue;//DCAz cut
     hDcaZ[1]->Fill(dcaz);
-
 
     //PID
     //TPC
@@ -1605,7 +1609,6 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
       float nSigTOFPosPion   = TMath::Abs(fPID->NumberOfSigmasTPC(pTrack,AliPID::kPion));//TOF π+
       float nSigTPCNegProton = TMath::Abs(fPID->NumberOfSigmasTPC(nTrack,AliPID::kProton));//TPC p-
       float nSigTOFNegProton = TMath::Abs(fPID->NumberOfSigmasTPC(nTrack,AliPID::kProton));//TOF p-
-
 
       TVector2 Vt(v0->MomV0X(), v0->MomV0Y());
       double phi = Vt.Phi();
@@ -2147,11 +2150,11 @@ void AliAnalysisTaskCVE::UserExec(Option_t *)
   }
 
   hEvtCount->Fill(20);
-  PostData(1,mOutputList);
+  PostData(1,fOutputList);
 }
 
 //---------------------------------------------------
-int AliAnalysisTaskCVE::GetRunNumBin(int runNum)
+int AliAnalysisTaskChiralVorticalEffect::GetRunNumBin(int runNum)
 {
   int runNumBin=-1;
   // 10h
@@ -2178,7 +2181,7 @@ int AliAnalysisTaskCVE::GetRunNumBin(int runNum)
 }
 
 
-bool AliAnalysisTaskCVE::IsGoodV0(AliAODv0 *aodV0) {
+bool AliAnalysisTaskChiralVorticalEffect::IsGoodV0(AliAODv0 *aodV0) {
   if (!aodV0) {
     AliError(Form("ERROR: Could not retrieve aodV0"));
     return kFALSE;
@@ -2215,7 +2218,7 @@ bool AliAnalysisTaskCVE::IsGoodV0(AliAODv0 *aodV0) {
   return kTRUE;
 }
 
-bool AliAnalysisTaskCVE::IsGoodDaughterTrack(const AliAODTrack *t)
+bool AliAnalysisTaskChiralVorticalEffect::IsGoodDaughterTrack(const AliAODTrack *t)
 {
   //* TPC refit
   if ( !t->IsOn(AliAODTrack::kTPCrefit) ) return kFALSE;
@@ -2234,4 +2237,10 @@ bool AliAnalysisTaskCVE::IsGoodDaughterTrack(const AliAODTrack *t)
   //* [number of crossed rows]>0.8 * [number of findable clusters].
   if (nCrossedRowsTPC/findable < 0.8) return kFALSE;
   return kTRUE;
+}
+
+//---------------------------------------------------
+void AliAnalysisTaskChiralVorticalEffect::Terminate(Option_t *) 
+{
+
 }
